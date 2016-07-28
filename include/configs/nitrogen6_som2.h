@@ -27,6 +27,8 @@
 #define BD_I2C_MASK	7
 #define BD_MMC_UMS_DISKS "1 0"
 
+#define CONFIG_ZERO_BOOTDELAY_CHECK //Check for character even if boot delay is 0
+
 #include "boundary.h"
 #define CONFIG_EXTRA_ENV_SETTINGS BD_BOUNDARY_ENV_SETTINGS \
 
