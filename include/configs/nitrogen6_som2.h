@@ -28,6 +28,7 @@
 #define BD_MMC_UMS_DISKS "1 0"
 
 #define CONFIG_ZERO_BOOTDELAY_CHECK //Check for character even if boot delay is 0
+#define CONFIG_VIDEO_SKIP_VERSION   //Skip version output on the LCD
 
 #include "boundary.h"
 #define CONFIG_EXTRA_ENV_SETTINGS BD_BOUNDARY_ENV_SETTINGS \
