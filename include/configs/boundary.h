@@ -7,6 +7,8 @@
 #ifndef __BOUNDARY_H
 #define __BOUNDARY_H
 
+#define VALID_MFG_BOOTSCRIPT_VER		"1.0"
+
 #define CONFIG_BOARD_EARLY_INIT_F
 #define CONFIG_MISC_INIT_R
 #define CONFIG_BOARD_LATE_INIT
@@ -114,7 +116,7 @@
 #define IMX_FEC_BASE			ENET_BASE_ADDR
 #endif
 #define CONFIG_FEC_XCV_TYPE		RGMII
-#define CONFIG_ETHPRIME			"FEC"
+//#define CONFIG_ETHPRIME			"FEC"
 #endif
 
 
@@ -224,7 +226,7 @@
 #endif
 
 #ifndef BD_BOOT_DEVS
-#define BD_BOOT_DEVS BD_BOOT_DEV_SATA BD_BOOT_DEV_MMC BD_BOOT_DEV_USB
+#define BD_BOOT_DEVS BD_BOOT_DEV_MMC
 #endif
 
 #ifndef BD_MMC_DISKS
@@ -295,43 +297,52 @@
 #define BD_RAM_FDT	"13000000"
 #endif
 
-#define BD_BOOTCMD_STD \
-		"script=/6x_bootscript;" \
-		"run runscript;" \
-		BD_STDOUT_VIDEO \
-		"echo ; echo 6x_bootscript not found ; " \
-		"echo ; echo serial console at 115200, 8N1 ; echo ; " \
-		"echo details at http://boundarydevices.com/6q_bootscript ; " \
-		BD_STDOUT_SERIAL \
-		BD_STDIN_USBKBD \
-		"for dtype in ${umsdevs} ; do " \
-			"initcmd='mmc rescan' ; disks=${mmc_ums_disks};" \
-			BD_UMS_SATA_PREPARE \
-			"for disk in ${disks} ; do " \
-				"if $initcmd && $dtype dev $disk ; then " \
-					BD_STDOUT_VIDEO \
-					"echo expose ${dtype} ${disk} " \
-						"over USB; " \
-					"ums 0 $dtype $disk ;" \
-				"fi; " \
-			"done;" \
-		"done;" \
-		BD_STDOUT_VIDEO \
-		"echo no block devices found;"
+//KOE 15 inch Display
+#if DEFINED_DISPLAY == KOE_15_INCH 
+#define VALID_FB_LVDS "koe:24:65000000,1024,768,220,40,21,7,60,10\0"
+#define VALID_CMD_LVDS "fdt set fb_lvds status okay;fdt set fb_lvds interface_pix_fmt RGB24;" \
+		"fdt set ldb/lvds-channel@0 fsl,data-width <24>;fdt set ldb/lvds-channel@0 fsl,data-mapping spwg;" \
+		"fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;" \
+		"fdt set t_lvds vactive <768>;fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;" \
+		"fdt set t_lvds vback-porch <21>;fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;" \
+		"fdt set t_lvds vsync-len <10>;"
+//Tianma 15 inch Display
+#elif DEFINED_DISPLAY == TIANMA_15_INCH
+#define VALID_FB_LVDS "tianma:18:65000000,1024,768,220,40,21,7,60,10\0"
+#define VALID_CMD_LVDS "fdt set fb_lvds status okay;fdt set fb_lvds interface_pix_fmt RGB666;" \
+	"fdt set ldb/lvds-channel@0 fsl,data-width <18>;fdt set ldb/lvds-channel@0 fsl,data-mapping spwg;" \
+	"fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;fdt set t_lvds vactive <768>;" \
+	"fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;fdt set t_lvds vback-porch <21>;" \
+	"fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;fdt set t_lvds vsync-len <10>;"
+#endif
 
+#define BD_BOOTCMD_STD "script=/6x_bootscript; run runscript;" 
 #ifndef BD_BOOTCMD
 #define BD_BOOTCMD BD_BOOTCMD_STD
 #endif
 
 #define BD_BOUNDARY_ENV_SETTINGS \
 	"active_partition=1\0" \
+	"bootargs=quiet snd-soc-core.pmdown_time=-1 mxc_hdmi.only_cea=1 " \
+		"console=ttymxc1,115200 vmalloc=400M consoleblank=0 rootwait fixrtc root=/dev/mmcblk1p2\0" \
+	"bootdelay=0\0" \
 	"bootdevs=" BD_BOOT_DEVS "\0" \
 	"bootcmd=" BD_BOOTCMD "\0" \
+	"bootscript=mmc dev 1 && load mmc 1:1 0x13000000 /imx6q-nitrogen6_som2.dtb && " \
+		"fdt addr 0x13000000 && setenv fdt_high 0xffffffff && fdt resize && " \
+		"run cmd_hdmi && run cmd_lcd && run cmd_lvds && run cmd_lvds2 && " \
+		"load mmc 1:1 0x10800000 /zImage && bootz 0x10800000 - 0x13000000\0" \
+	"bootscriptver=1.0\0" \
 	"clearenv=if sf probe || sf probe ; then " \
 		"sf erase 0xc0000 0x2000 && " \
 		"echo restored environment to factory default ; fi\0" \
+	"cmd_hdmi=fdt set fb_hdmi status disabled\0" \
+	"cmd_lcd=fdt set fb_lcd status disabled\0" \
+	"cmd_lvds=" VALID_CMD_LVDS "\0" \
+	"cmd_lvds2=fdt set fb_lvds2 status disabled\0" \
 	"console=" BD_CONSOLE "\0" \
 	"dfu_alt_info=u-boot raw 0x0 0xc0000\0" \
+	"fb_lvds=" VALID_FB_LVDS "\0" \
 	"fdt_addr=" BD_RAM_FDT "\0" \
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
