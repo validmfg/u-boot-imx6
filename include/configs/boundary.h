@@ -7,6 +7,8 @@
 #ifndef __BOUNDARY_H
 #define __BOUNDARY_H
 
+#define VALID_MFG_BOOTSCRIPT_VER		"1.0"
+
 #define CONFIG_BOARD_EARLY_INIT_F
 #define CONFIG_MISC_INIT_R
 #define CONFIG_BOARD_LATE_INIT
@@ -114,7 +116,7 @@
 #define IMX_FEC_BASE			ENET_BASE_ADDR
 #endif
 #define CONFIG_FEC_XCV_TYPE		RGMII
-//#define CONFIG_ETHPRIME			"FEC"
+/* #define CONFIG_ETHPRIME                      "FEC" */
 #endif
 
 
@@ -295,23 +297,24 @@
 #define BD_RAM_FDT	"13000000"
 #endif
 
-//KOE 15 inch Display
+/* KOE 15 inch Display */
 #if DEFINED_DISPLAY == KOE_15_INCH 
-#define VALID_FB_LVDS "koe:24:65000000,1024,768,220,40,21,7,60,10"
+#define VALID_FB_LVDS "koe:24:65000000,1024,768,220,40,21,7,60,10\0"
 #define VALID_CMD_LVDS "fdt set fb_lvds status okay;fdt set fb_lvds interface_pix_fmt RGB24;" \
 		"fdt set ldb/lvds-channel@0 fsl,data-width <24>;fdt set ldb/lvds-channel@0 fsl,data-mapping spwg;" \
 		"fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;" \
 		"fdt set t_lvds vactive <768>;fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;" \
 		"fdt set t_lvds vback-porch <21>;fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;" \
 		"fdt set t_lvds vsync-len <10>;"
-//Tianma 15 inch Display
+/* Tianma 15 inch Display */
 #elif DEFINED_DISPLAY == TIANMA_15_INCH
-#define VALID_FB_LVDS "tianma:18:65000000,1024,768,220,40,21,7,60,10"
+#define VALID_FB_LVDS "tianma:18:65000000,1024,768,220,40,21,7,60,10\0"
 #define VALID_CMD_LVDS "fdt set fb_lvds status okay;fdt set fb_lvds interface_pix_fmt RGB666;" \
 	"fdt set ldb/lvds-channel@0 fsl,data-width <18>;fdt set ldb/lvds-channel@0 fsl,data-mapping spwg;" \
-	"fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;fdt set t_lvds vactive <768>;" \
-	"fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;fdt set t_lvds vback-porch <21>;" \
-	"fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;fdt set t_lvds vsync-len <10>;"
+	"fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;" \
+	"fdt set t_lvds vactive <768>;fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;" \
+	"fdt set t_lvds vback-porch <21>;fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;" \
+	"fdt set t_lvds vsync-len <10>;"
 #endif
 
 #define BD_BOOTCMD_STD "script=/6x_bootscript; run runscript;" 
@@ -379,7 +382,7 @@
 		"setenv bootargs console=${console},115200; " \
 		"tftpboot " BD_RAM_KERNEL " 10.0.0.1:uImage-${board}-recovery && " \
 		"tftpboot " BD_RAM_RAMDISK " 10.0.0.1:uramdisk-${board}-recovery.img && " \
-		"bootm " BD_RAM_KERNEL " " BD_RAM_RAMDISK "\0"
+		"bootm " BD_RAM_KERNEL " " BD_RAM_RAMDISK "\0" \
 
 /* Miscellaneous configurable options */
 #define CONFIG_CMD_TIME
