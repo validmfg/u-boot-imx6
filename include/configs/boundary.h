@@ -233,9 +233,9 @@
 #if (CONFIG_SYS_FSL_USDHC_NUM == 1)
 #define BD_MMC_DISKS "0"
 #elif (CONFIG_SYS_FSL_USDHC_NUM == 2)
-#define BD_MMC_DISKS "0 1"
+#define BD_MMC_DISKS "1 0"
 #else
-#define BD_MMC_DISKS "0 1 2"
+#define BD_MMC_DISKS "1 0 2"
 #endif
 #endif
 
