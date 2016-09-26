@@ -24,10 +24,7 @@ setenv fdt_addr '0x13000000'
 setenv fdt_high '0xffffffff'
 setenv filesize 'a925'
 setenv ethprime
-
-env default bootdevs
-env default fdt_addr
-env default runscript
+setenv runscript 'for dtype in ${bootdevs}; do if itest.s usb == ${dtype} ; then usb start ; fi; disks=${mmc_disks}; if itest.s mmc != ${dtype} ; then disks=0; fi; for disk in ${disks} ; do ${dtype} dev ${disk} ; load ${dtype} ${disk}:${active_partition} 10008000 ${script} && source 10008000; done ; done;\0'
 
 # KOE 15" Display
 setenv fb_lvds 'koe:24:65000000,1024,768,220,40,21,7,60,10'
