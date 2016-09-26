@@ -22,9 +22,12 @@ setenv cmd_lvds2 'fdt set fb_lvds2 status disabled'
 setenv fb_hdmi 'off'
 setenv fdt_addr '0x13000000'
 setenv fdt_high '0xffffffff'
-setenv fdtaddr '318767104'
 setenv filesize 'a925'
-setenv ethprime 
+setenv ethprime
+
+env default bootdevs
+env default fdt_addr
+env default runscript
 
 # KOE 15" Display
 setenv fb_lvds 'koe:24:65000000,1024,768,220,40,21,7,60,10'
