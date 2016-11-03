@@ -1,7 +1,10 @@
+
 # This bootscript will set the envoronment variables the way we want them and then update u-boot
 # It will only be called when bootscriptver is not equal to the version in this file
 
 thisver=1.0
+
+echo "Running bootscript $thisver
 
 if itest $thisver <= ${bootscriptver} ; then
   run bootscript
@@ -13,7 +16,7 @@ echo "Updating environment variables"
 
 setenv bootdelay '0'
 setenv bootargs 'quiet snd-soc-core.pmdown_time=-1 mxc_hdmi.only_cea=1 console=ttymxc1,115200 vmalloc=400M consoleblank=0 rootwait fixrtc root=/dev/mmcblk1p2'
-setenv bootcmd 'script=/6x_bootscript;run runscript'
+setenv bootcmd 'load mmc 1:1 10008000 /6x_bootscript&& source 10008000'
 setenv bootscript 'mmc dev 1 && load mmc 1:1 0x13000000 /imx6q-nitrogen6_som2.dtb && fdt addr 0x13000000 && setenv fdt_high 0xffffffff && fdt resize && run cmd_hdmi && run cmd_lcd && run cmd_lvds && run cmd_lvds2 && load mmc 1:1 0x10800000 /zImage && bootz 0x10800000 - 0x13000000'
 setenv bootdevs 'mmc'
 setenv cmd_hdmi 'fdt set fb_hdmi status disabled'
