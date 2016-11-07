@@ -4,7 +4,7 @@
 
 thisver=1.0
 
-echo "Running bootscript $thisver
+echo "Running bootscript" $thisver
 
 if itest $thisver <= ${bootscriptver} ; then
   run bootscript
