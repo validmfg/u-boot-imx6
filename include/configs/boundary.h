@@ -93,7 +93,9 @@
 #define CONFIG_MXC_SPI
 #endif
 #define CONFIG_SF_DEFAULT_BUS  0
+#ifndef CONFIG_SF_DEFAULT_CS
 #define CONFIG_SF_DEFAULT_CS   0
+#endif
 #define CONFIG_SF_DEFAULT_SPEED 25000000
 #define CONFIG_SF_DEFAULT_MODE (SPI_MODE_0)
 #endif
@@ -147,6 +149,8 @@
 #define CONFIG_USB_EHCI
 #ifdef CONFIG_MX7D
 #define CONFIG_USB_EHCI_MX7
+#elif defined(CONFIG_MX51)
+#define CONFIG_USB_EHCI_MX5
 #else
 #define CONFIG_USB_EHCI_MX6
 #endif
@@ -156,8 +160,12 @@
 #define CONFIG_USB_ETHER_MCS7830
 #define CONFIG_USB_ETHER_SMSC95XX
 #define CONFIG_EHCI_HCD_INIT_AFTER_RESET	/* For OTG port */
+#ifndef CONFIG_MXC_USB_PORTSC
 #define CONFIG_MXC_USB_PORTSC	(PORT_PTS_UTMI | PORT_PTS_PTW)
+#endif
+#ifndef CONFIG_MXC_USB_FLAGS
 #define CONFIG_MXC_USB_FLAGS	0
+#endif
 #define CONFIG_USB_KEYBOARD
 #define CONFIG_SYS_USB_EVENT_POLL_VIA_CONTROL_EP
 #endif
@@ -262,7 +270,11 @@
 #endif
 
 #ifndef BD_CONSOLE
-#define BD_CONSOLE "ttymxc1"
+#if CONFIG_MXC_UART_BASE == UART2_BASE
+#define BD_CONSOLE	"ttymxc1"
+#elif CONFIG_MXC_UART_BASE == UART1_BASE
+#define BD_CONSOLE	"ttymxc0"
+#endif
 #endif
 
 #ifdef CONFIG_VIDEO
@@ -289,12 +301,73 @@
 #define BD_RAM_KERNEL	"80800000"
 #define BD_RAM_RAMDISK	"82800000"
 #define BD_RAM_FDT	"83000000"
+#elif defined(CONFIG_MX51)
+#define BD_RAM_BASE	0x90000000
+#define BD_RAM_SCRIPT	"90008000"
+#define BD_RAM_KERNEL	"90800000"
+#define BD_RAM_RAMDISK	"92800000"
+#define BD_RAM_FDT	"93000000"
 #else
 #define BD_RAM_BASE	0x10000000
 #define BD_RAM_SCRIPT	"10008000"
 #define BD_RAM_KERNEL	"10800000"
 #define BD_RAM_RAMDISK	"12800000"
 #define BD_RAM_FDT	"13000000"
+#endif
+
+#ifndef BD_FUSE1
+#if defined(CONFIG_MX6SX)
+#define BD_FUSE1		"0 5"
+#define BD_FUSE1_VAL		"08000030"	/* CS0 */
+#define BD_FUSE2		"0 6"
+#define BD_FUSE2_VAL		"00000010"
+#elif defined(CONFIG_MX6Q) || defined(CONFIG_MX6S) || defined(CONFIG_MX6DL)
+#define BD_FUSE1		"0 5"
+#define BD_FUSE1_VAL		"18000030"	/* CS1 */
+#define BD_FUSE2		"0 6"
+#define BD_FUSE2_VAL		"00000010"
+#elif defined(CONFIG_MX7D)
+#define BD_FUSE1		"1 3"
+#define BD_FUSE1_VAL		"10004000"	/* QSPI */
+#endif
+#endif
+
+#ifndef BD_FUSE_MAC1A
+#if defined(CONFIG_MX7D)
+#define BD_FUSE_MAC1A		"9 1"
+#define BD_FUSE_MAC1A_VAL	"00000019"
+#define BD_FUSE_MAC1B		"9 0"
+#else
+#define BD_FUSE_MAC1A		"4 3"
+#define BD_FUSE_MAC1A_VAL	"00000019"
+#define BD_FUSE_MAC1B		"4 2"
+#endif
+#endif
+
+#ifdef BD_FUSE1
+#define BD_FUSE1_STR		"fuse1=" BD_FUSE1 "\0"
+#define BD_FUSE1_VAL_STR	"fuse1_val=" BD_FUSE1_VAL "\0"
+#else
+#define BD_FUSE1_STR		""
+#define BD_FUSE1_VAL_STR	""
+#endif
+
+#ifdef BD_FUSE2
+#define BD_FUSE2_STR		"fuse2=" BD_FUSE2 "\0"
+#define BD_FUSE2_VAL_STR	"fuse2_val=" BD_FUSE2_VAL "\0"
+#else
+#define BD_FUSE2_STR		""
+#define BD_FUSE2_VAL_STR	""
+#endif
+
+#ifdef BD_FUSE_MAC1A
+#define BD_FUSE_MAC1A_STR	"fuse_mac1a=" BD_FUSE_MAC1A "\0"
+#define BD_FUSE_MAC1A_VAL_STR	"fuse_mac1a_val=" BD_FUSE_MAC1A_VAL "\0"
+#define BD_FUSE_MAC1B_STR	"fuse_mac1b=" BD_FUSE_MAC1B "\0"
+#else
+#define BD_FUSE_MAC1A_STR	""
+#define BD_FUSE_MAC1A_VAL_STR	""
+#define BD_FUSE_MAC1B_STR	""
 #endif
 
 /* KOE 15 inch Display */
@@ -318,8 +391,21 @@
 #endif
 
 #define BD_BOOTCMD_STD "script=/6x_bootscript; run runscript;" 
+
 #ifndef BD_BOOTCMD
 #define BD_BOOTCMD BD_BOOTCMD_STD
+#endif
+
+#ifdef BD_LOG_LEVEL
+#define LOG_LEVEL_STR "loglevel=" BD_LOG_LEVEL "\0"
+#else
+#define LOG_LEVEL_STR ""
+#endif
+
+#ifdef BD_CMA
+#define LOG_CMA_STR "cma=" BD_CMA "\0"
+#else
+#define LOG_CMA_STR ""
 #endif
 
 #define BD_BOUNDARY_ENV_SETTINGS \
@@ -341,15 +427,26 @@
 	"cmd_lcd=fdt set fb_lcd status disabled\0" \
 	"cmd_lvds=" VALID_CMD_LVDS "\0" \
 	"cmd_lvds2=fdt set fb_lvds2 status disabled\0" \
+	LOG_CMA_STR \
 	"console=" BD_CONSOLE "\0" \
 	"dfu_alt_info=u-boot raw 0x0 0xc0000\0" \
 	"fb_lvds=" VALID_FB_LVDS "\0" \
 	"fdt_addr=" BD_RAM_FDT "\0" \
 	"fdt_high=0xffffffff\0" \
+	BD_FUSE1_STR \
+	BD_FUSE1_VAL_STR \
+	BD_FUSE2_STR \
+	BD_FUSE2_VAL_STR \
+	BD_FUSE_MAC1A_STR \
+	BD_FUSE_MAC1A_VAL_STR \
+	BD_FUSE_MAC1B_STR \
 	"initrd_high=0xffffffff\0" \
 	"loadsplash=if sf probe ; then sf read ${splashimage} ${splashflash} ${splashsize} ; fi\0" \
+	LOG_LEVEL_STR \
 	"mmc_disks=" BD_MMC_DISKS "\0" \
 	"mmc_ums_disks=" BD_MMC_UMS_DISKS "\0" \
+	"net_fuses=dhcp " BD_RAM_SCRIPT " prog_fuses && source " BD_RAM_SCRIPT "\0" \
+	"net_program=next=prog_fuses; run net_upgradeu\0" \
 	"net_upgradeu=dhcp " BD_RAM_SCRIPT " net_upgradeu && source " BD_RAM_SCRIPT "\0" \
 	"rundfu=dfu 0 sf 0:0:25000000:0\0" \
 	"runscript=" \
@@ -367,7 +464,10 @@
 				"source " BD_RAM_SCRIPT ";" \
 			"done ; " \
 		"done;\0" \
+	"otg_fuses=run usbnetwork; tftp " BD_RAM_SCRIPT " prog_fuses && source " BD_RAM_SCRIPT "\0" \
+	"otg_program=next=prog_fuses; run otg_upgradeu\0" \
 	"otg_upgradeu=run usbnetwork; tftp " BD_RAM_SCRIPT " net_upgradeu && source " BD_RAM_SCRIPT "\0" \
+	"program=next=prog_fuses; run upgradeu\0" \
 	"splashflash=" BD_SPLASH_FLASH "\0" \
 	"uboot_defconfig=" CONFIG_DEFCONFIG "\0" \
 	"umsdevs=" BD_UMSDEVS "\0" \
@@ -394,7 +494,12 @@
 
 /* Physical Memory Map */
 #define CONFIG_NR_DRAM_BANKS	       1
+#if defined(CONFIG_MX51)
+#define PHYS_SDRAM		       CSD0_BASE_ADDR
+#else
 #define PHYS_SDRAM		       MMDC0_ARB_BASE_ADDR
+#endif
+
 #define CONFIG_RESET_CAUSE_ADDR	       (PHYS_SDRAM + 0x80)
 
 #define CONFIG_SYS_SDRAM_BASE	       PHYS_SDRAM
@@ -438,6 +543,7 @@
 
 #define CONFIG_CMD_UNZIP
 
+#ifdef CONFIG_CI_UDC
 #define CONFIG_USB_GADGET
 #define CONFIG_CMD_USB_MASS_STORAGE
 #define CONFIG_USB_FUNCTION_MASS_STORAGE
@@ -457,6 +563,7 @@
 #define CONFIG_FASTBOOT_FLASH
 #define CONFIG_FASTBOOT_FLASH_MMC_DEV   BD_FASTBOOT_FLASH_MMC_DEV
 #define CONFIG_CMD_GPT
+#define CONFIG_CMD_PART
 #define CONFIG_PARTITION_UUIDS
 
 /* USB Device Firmware Update support */
@@ -465,5 +572,6 @@
 #define CONFIG_CMD_DFU
 #define CONFIG_SYS_DFU_DATA_BUF_SIZE	0xc0000
 #define DFU_MANIFEST_POLL_TIMEOUT	25000
+#endif
 
 #endif

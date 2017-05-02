@@ -118,6 +118,9 @@ config TARGET_MX6UL_14X14_EVK
 config TARGET_A
 	bool "a"
 
+config TARGET_ACL
+	bool "acl"
+
 config TARGET_ASH
 	bool "ash"
 
@@ -195,6 +198,7 @@ config TARGET_NITROGEN6_VM
 
 config TARGET_NITROGEN6SX
 	bool "nitrogen6sx"
+	select MX6SX
 
 config TARGET_NITROGEN6X
 	bool "nitrogen6x"
@@ -231,6 +235,10 @@ config TARGET_UTC
 
 config TARGET_VP
 	bool "vp"
+
+config TARGET_YS
+	bool "ys"
+	select MX6SX
 
 config TARGET_OT1200
 	bool "Bachmann OT1200"
@@ -277,6 +285,7 @@ source "board/bachmann/ot1200/Kconfig"
 source "board/barco/platinum/Kconfig"
 source "board/barco/titanium/Kconfig"
 source "board/boundary/a/Kconfig"
+source "board/boundary/acl/Kconfig"
 source "board/boundary/ash/Kconfig"
 source "board/boundary/bt/Kconfig"
 source "board/boundary/bt2/Kconfig"
@@ -315,6 +324,7 @@ source "board/boundary/ta/Kconfig"
 source "board/boundary/usd/Kconfig"
 source "board/boundary/utc/Kconfig"
 source "board/boundary/vp/Kconfig"
+source "board/boundary/ys/Kconfig"
 source "board/compulab/cm_fx6/Kconfig"
 source "board/congatec/cgtqmx6eval/Kconfig"
 source "board/embest/mx6boards/Kconfig"
