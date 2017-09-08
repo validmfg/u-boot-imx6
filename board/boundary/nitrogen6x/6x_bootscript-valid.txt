@@ -30,8 +30,8 @@ setenv ethprime
 setenv runscript 'for dtype in ${bootdevs}; do if itest.s usb == ${dtype} ; then usb start ; fi; disks=${mmc_disks}; if itest.s mmc != ${dtype} ; then disks=0; fi; for disk in ${disks} ; do ${dtype} dev ${disk} ; load ${dtype} ${disk}:${active_partition} 10008000 ${script} && source 10008000; done ; done;\0'
 
 # KOE 15" Display
-setenv fb_lvds 'koe:24:65000000,1024,768,220,40,21,7,60,10'
-setenv cmd_lvds 'fdt set fb_lvds status okay;fdt set fb_lvds interface_pix_fmt RGB24;fdt set ldb/lvds-channel@0 fsl,data-width <24>;fdt set ldb/lvds-channel@0 fsl,data-mapping spwg;fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;fdt set t_lvds vactive <768>;fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;fdt set t_lvds vback-porch <21>;fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;fdt set t_lvds vsync-len <10>;'
+#setenv fb_lvds 'koe:24:65000000,1024,768,220,40,21,7,60,10'
+#setenv cmd_lvds 'fdt set fb_lvds status okay;fdt set fb_lvds interface_pix_fmt RGB24;fdt set ldb/lvds-channel@0 fsl,data-width <24>;fdt set ldb/lvds-channel@0 fsl,data-mapping spwg;fdt set t_lvds clock-frequency <65002600>;fdt set t_lvds hactive <1024>;fdt set t_lvds vactive <768>;fdt set t_lvds hback-porch <220>;fdt set t_lvds hfront-porch <40>;fdt set t_lvds vback-porch <21>;fdt set t_lvds vfront-porch <7>;fdt set t_lvds hsync-len <60>;fdt set t_lvds vsync-len <10>;'
 
 # Tianma 15" Display
 #setenv fb_lvds 'tianma:18:65000000,1024,768,220,40,21,7,60,10'
