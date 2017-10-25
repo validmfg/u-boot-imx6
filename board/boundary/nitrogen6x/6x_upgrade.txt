@@ -96,8 +96,8 @@ if cmp.b ${a_uImage1} ${a_uImage2} $filesize ; then
 fi
 
 echo "Need U-Boot upgrade" ;
-echo "Program in 5 seconds" ;
-for n in 5 4 3 2 1 ; do
+echo "Program in 3 seconds" ;
+for n in 3 2 1 ; do
 	echo $n ;
 	sleep 1 ;
 done
@@ -149,10 +149,10 @@ if itest.s "x" != "x${next}" ; then
 	fi
 fi
 
-echo "---- U-Boot upgraded. reseting in 3" ; do
+echo "---- U-Boot upgraded. reseting in 3"
 sleep 1
-echo "---- U-Boot upgraded. reseting in 3" ; do
+echo "2"
 sleep 1
-echo "---- U-Boot upgraded. reseting in 1" ; do
+echo "1"
 sleep 1
 reset
