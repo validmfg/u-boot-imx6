@@ -149,6 +149,10 @@ if itest.s "x" != "x${next}" ; then
 	fi
 fi
 
-while echo "---- U-Boot upgraded. reset" ; do
-	sleep 120
-done
+echo "---- U-Boot upgraded. reseting in 3" ; do
+sleep 1
+echo "---- U-Boot upgraded. reseting in 3" ; do
+sleep 1
+echo "---- U-Boot upgraded. reseting in 1" ; do
+sleep 1
+reset
